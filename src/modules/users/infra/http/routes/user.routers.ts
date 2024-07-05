@@ -9,9 +9,10 @@ import DeleteUserController from '../controllers/DeleteUserController';
 import { RequestParamsDataValidator } from '@shared/infra/http/middlewares/RequestParamsDataValidator.middleware';
 import { ShowUserSchema } from '../joi/schemas/ShowUserSchema';
 import UpdateUserController from '../controllers/UpdateUserController';
-import { RequestUpdateUserDataValidator } from '@shared/infra/http/middlewares/RequestUpdateUserDataValidator.middleware';
+
 import { UpdateUserSchema } from '../joi/schemas/UpdateUserSchema';
 import { ListUserSchema } from '../joi/schemas/ListUserSchema';
+import { RequestUpdateEntityDataValidator } from '@shared/infra/http/middlewares/RequestUpdateEntityDataValidator.middleware';
 
 const userRouter = Router();
 
@@ -51,7 +52,7 @@ userRouter.delete(
 userRouter.put(
   '/:id',
   isAuthenticated,
-  RequestUpdateUserDataValidator(UpdateUserSchema),
+  RequestUpdateEntityDataValidator(UpdateUserSchema),
   updateUserController.execute,
 );
 

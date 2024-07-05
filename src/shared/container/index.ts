@@ -4,6 +4,8 @@ import UsersRepository from '@modules/users/infra/typeorm/repositories/implement
 import { container } from 'tsyringe';
 import { IHashProvider } from '@modules/users/providers/hashProvider/models/IHashProvider';
 import BcryptHashProvider from '@modules/users/providers/hashProvider/implementations/BcryptHashProvider';
+import { ICarsRepository } from '@modules/cars/domain/models/repositories/CarsRepository.interface';
+import CarsRepository from '@modules/cars/infra/typeorm/repositories/implementation/CarsRepository';
 
 container.registerSingleton<IUsersRepository>(
   'UsersRepository',
@@ -11,3 +13,5 @@ container.registerSingleton<IUsersRepository>(
 );
 
 container.registerSingleton<IHashProvider>('HashProvider', BcryptHashProvider);
+
+container.registerSingleton<ICarsRepository>('CarsRepository', CarsRepository);

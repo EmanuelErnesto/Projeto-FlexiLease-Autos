@@ -12,3 +12,7 @@ export const JWT_INVALID = 'Invalid JWT Token.';
 export const OLD_PASSWORD_REQUIRED = 'Old password is required';
 export const OLD_PASSWORD_DONT_MATCH = 'Old password does not match';
 export const INSUFFICIENT_AGE = 'Your age is under 18. ';
+export const INVALID_ACCESSORY =
+  'You inserted duplicated accessory. Please modify and try again.';
+export const CAR_NOT_FOUND = 'Car not found';
+export const INSUFFICIENT_ACCESSORY = 'The minimum of accessories is 1';

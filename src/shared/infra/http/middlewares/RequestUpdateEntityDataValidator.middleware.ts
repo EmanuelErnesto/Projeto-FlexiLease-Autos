@@ -2,7 +2,7 @@ import { ValidationError } from '@shared/errors/ValidationError';
 import { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
 
-export const RequestUpdateUserDataValidator = (schema: Joi.ObjectSchema) => {
+export const RequestUpdateEntityDataValidator = (schema: Joi.ObjectSchema) => {
   return (request: Request, response: Response, next: NextFunction) => {
     const data = {
       ...request.params,
