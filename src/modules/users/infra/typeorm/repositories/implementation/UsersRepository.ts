@@ -76,7 +76,11 @@ export default class UsersRepository implements IUsersRepository {
 
     (Object.keys(params) as (keyof PaginationParamsDto)[]).forEach(key => {
       if (params[key] !== undefined && key !== 'limit' && key !== 'offset') {
-        query[key] = params[key];
+        if (typeof params[key] === 'string') {
+          query[key] = { $regex: params[key], $options: 'i' };
+        } else {
+          query[key] = params[key];
+        }
       }
     });
 
