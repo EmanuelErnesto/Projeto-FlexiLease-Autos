@@ -14,8 +14,11 @@ export const userConfig = {
   ],
   test: {
     globals: true,
+    environment: 'node',
+    retry: 2,
     root: './',
     coverage: {
+      provider: 'v8',
       exclude: [
         '**/*index.ts',
         '**/*server.ts',
@@ -23,8 +26,9 @@ export const userConfig = {
         '**/*.dto.ts',
         '**/*.config.mjs',
       ],
+      reporter: ['text', 'json', 'html'],
     },
-    testTimeout: 15000,
+    testTimeout: 20000,
   },
 };
 

@@ -34,7 +34,30 @@ describe('UpdateUserController', () => {
   beforeEach(async () => {
     updateUserService = container.resolve(UpdateUserService);
   });
+
+  const createUserAndAuthenticate = async () => {
+    const createUser = {
+      name: 'Josué Motoboy',
+      cpf: '123.456.789-00',
+      birth: '10/05/2000',
+      email: 'josue123@example.com',
+      password: 'senha123',
+      cep: '01001000',
+      qualified: 'no',
+    };
+
+    await supertest(app).post(url).send(createUser);
+
+    const sessionResponse = await supertest(app).post(sessionUrl).send({
+      email: createUser.email,
+      password: createUser.password,
+    });
+
+    return sessionResponse.body.token;
+  };
+
   it('Should be able to update a existent user', async () => {
+    const token = await createUserAndAuthenticate();
     const createUser = {
       name: 'Chinatown',
       cpf: '123.456.789-20',
@@ -58,11 +81,7 @@ describe('UpdateUserController', () => {
     };
 
     const userCreated = await supertest(app).post(url).send(createUser);
-    const sessionResponse = await supertest(app).post(sessionUrl).send({
-      email: createUser.email,
-      password: createUser.password,
-    });
-    const token = sessionResponse.body.token;
+
     const urlWithId = url + '/' + `${userCreated.body._id}`;
 
     const response = await supertest(app)
@@ -77,6 +96,7 @@ describe('UpdateUserController', () => {
   });
 
   it('Should not be able to update a user that not exists', async () => {
+    const token = await createUserAndAuthenticate();
     const createUser = {
       name: 'Chinatown',
       cpf: '123.456.789-20',
@@ -102,11 +122,6 @@ describe('UpdateUserController', () => {
     };
 
     await supertest(app).post(url).send(createUser);
-    const sessionResponse = await supertest(app).post(sessionUrl).send({
-      email: createUser.email,
-      password: createUser.password,
-    });
-    const token = sessionResponse.body.token;
 
     const response = await supertest(app)
       .put(urlWithId)
@@ -117,6 +132,7 @@ describe('UpdateUserController', () => {
     expect(response.body).toEqual(expectedResponse);
   });
   it('Should not be able to update a user with a existent email', async () => {
+    const token = await createUserAndAuthenticate();
     const createUser = {
       name: 'Chinatown',
       cpf: '123.456.789-20',
@@ -158,13 +174,6 @@ describe('UpdateUserController', () => {
 
     const urlWithId = url + '/' + `${userCreated.body._id}`;
 
-    const sessionResponse = await supertest(app).post(sessionUrl).send({
-      email: createUser.email,
-      password: createUser.password,
-    });
-
-    const token = sessionResponse.body.token;
-
     const response = await supertest(app)
       .put(urlWithId)
       .send({
@@ -177,6 +186,7 @@ describe('UpdateUserController', () => {
     expect(response.body).toEqual(expectedResponse);
   });
   it('Should not be able to update a user password without old password', async () => {
+    const token = await createUserAndAuthenticate();
     const createUser2 = {
       name: 'Ana Maria',
       cpf: '123.456.789-10',
@@ -208,13 +218,6 @@ describe('UpdateUserController', () => {
 
     const urlWithId = url + '/' + `${userCreated.body._id}`;
 
-    const sessionResponse = await supertest(app).post(sessionUrl).send({
-      email: createUser2.email,
-      password: createUser2.password,
-    });
-
-    const token = sessionResponse.body.token;
-
     const response = await supertest(app)
       .put(urlWithId)
       .send(updateUser2)
@@ -224,6 +227,7 @@ describe('UpdateUserController', () => {
     expect(response.body).toEqual(expectedResponse);
   });
   it('Should not be able to update a user password if old password does not match with the password registered', async () => {
+    const token = await createUserAndAuthenticate();
     const createUser2 = {
       name: 'Ana Maria',
       cpf: '123.456.789-10',
@@ -256,13 +260,6 @@ describe('UpdateUserController', () => {
 
     const urlWithId = url + '/' + `${userCreated.body._id}`;
 
-    const sessionResponse = await supertest(app).post(sessionUrl).send({
-      email: createUser2.email,
-      password: createUser2.password,
-    });
-
-    const token = sessionResponse.body.token;
-
     const response = await supertest(app)
       .put(urlWithId)
       .send(updateUser2)
@@ -272,6 +269,7 @@ describe('UpdateUserController', () => {
     expect(response.body).toEqual(expectedResponse);
   });
   it('Should not be able to update a user with a existent cpf', async () => {
+    const token = await createUserAndAuthenticate();
     const createUser = {
       name: 'Chinatown',
       cpf: '123.456.789-20',
@@ -312,13 +310,6 @@ describe('UpdateUserController', () => {
     const userCreated = await supertest(app).post(url).send(createUser2);
 
     const urlWithId = url + '/' + `${userCreated.body._id}`;
-
-    const sessionResponse = await supertest(app).post(sessionUrl).send({
-      email: createUser.email,
-      password: createUser.password,
-    });
-
-    const token = sessionResponse.body.token;
 
     const response = await supertest(app)
       .put(urlWithId)
