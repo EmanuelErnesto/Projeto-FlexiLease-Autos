@@ -1,0 +1,583 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "FlexiLease Autos User Management API",
+    "description": "API endpoints for user registration, authentication, and management in FlexiLease Autos project.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api/v1"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "UserDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The user's full name.",
+            "example": "John Doe"
+          },
+          "cpf": {
+            "type": "string",
+            "description": "The user's CPF. Format: xxx.xxx.xxx-xx",
+            "example": "123.456.789-40"
+          },
+          "birth": {
+            "type": "string",
+            "description": "The user's date of birth in DD/MM/YYYY format.",
+            "example": "01/01/1990"
+          },
+          "email": {
+            "type": "string",
+            "description": "The user's email address.",
+            "example": "johndoe@example.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "The user's password in plain text. This field should not be included in response examples.",
+            "example": "johnpassword1233"
+          },
+          "cep": {
+            "type": "string",
+            "description": "The user's CEP (postal code) in Brazil.",
+            "example": "01001000"
+          },
+          "qualified": {
+            "type": "string",
+            "description": "Whether the user is qualified. Accepted values: 'yes' or 'no'.",
+            "example": "yes"
+          }
+        },
+        "required": ["name", "email", "cpf", "password", "birth"]
+      },
+      "UserResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "The user's unique identifier (converted from ObjectId)"
+          },
+          "name": {
+            "type": "string",
+            "description": "The user's full name"
+          },
+          "cpf": {
+            "type": "string",
+            "description": "The user's CPF number"
+          },
+          "birth": {
+            "type": "string",
+            "description": "The user's date of birth in ISO 8601 format (e.g., YYYY-MM-DD)"
+          },
+          "email": {
+            "type": "string",
+            "description": "The user's email address"
+          },
+          "cep": {
+            "type": "string",
+            "description": "The user's CEP (postal code) in Brazil"
+          },
+          "qualified": {
+            "type": "string",
+            "description": "The user's qualification status (enum value from Qualified)"
+          },
+          "patio": {
+            "type": "string",
+            "description": "The user's patio information (optional)"
+          },
+          "complement": {
+            "type": "string",
+            "description": "The user's address complement (optional)"
+          },
+          "neighborhood": {
+            "type": "string",
+            "description": "The user's neighborhood"
+          },
+          "locality": {
+            "type": "string",
+            "description": "The user's city/town"
+          },
+          "uf": {
+            "type": "string",
+            "description": "The user's state abbreviation in Brazil"
+          }
+        }
+      },
+      "BadRequestError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "status": {
+            "type": "string",
+            "example": "Bad Request"
+          },
+          "message": {
+            "type": "string",
+            "example": "There is already a user with this email"
+          }
+        }
+      },
+      "NotFoundError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 404
+          },
+          "status": {
+            "type": "string",
+            "example": "Not Found"
+          },
+          "message": {
+            "type": "string",
+            "example": "User not found"
+          }
+        }
+      },
+      "UnauthorizedError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 401
+          },
+          "status": {
+            "type": "string",
+            "example": "Unauthorized"
+          },
+          "message": {
+            "type": "string",
+            "example": "JWT Token is missing"
+          }
+        }
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The user's updated full name.",
+            "example": "Jane Doe"
+          },
+          "cpf": {
+            "type": "string",
+            "description": "The user's updated CPF. Format: xxx.xxx.xxx-xx",
+            "example": "789.456.123-40"
+          },
+          "birth": {
+            "type": "string",
+            "description": "The user's updated date of birth in DD/MM/YYYY format.",
+            "example": "20/07/1995"
+          },
+          "email": {
+            "type": "string",
+            "description": "The user's updated email address.",
+            "example": "janedoe@example.com"
+          },
+          "old_password": {
+            "type": "string",
+            "description": "The user's old password for verification.",
+            "example": "johnpassword1233"
+          },
+          "password": {
+            "type": "string",
+            "description": "The user's new password in plain text.",
+            "example": "newPassword123"
+          },
+          "password_confirmation": {
+            "type": "string",
+            "description": "Confirmation of the user's new password.",
+            "example": "newPassword123"
+          },
+          "cep": {
+            "type": "string",
+            "description": "The user's updated CEP (postal code) in Brazil.",
+            "example": "01001000"
+          },
+          "qualified": {
+            "type": "string",
+            "description": "Whether the user is still qualified after update. Accepted values: 'yes' or 'no'.",
+            "example": "yes"
+          }
+        },
+        "required": ["name", "email", "cpf", "birth", "old_password", "password", "password_confirmation"]
+      }
+    }
+  },
+  "paths": {
+    "/user": {
+      "post": {
+        "tags": ["User Management"],
+        "summary": "Create a new user",
+        "description": "Endpoint to register a new user.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid user data or already existing email/cpf.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["User Management"],
+        "summary": "List all users",
+        "description": "Endpoint to retrieve all users.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 10
+            },
+            "description": "Number of users to return per page."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "example": 0
+            },
+            "description": "Number of users to skip before starting to collect the result set."
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "John Doe"
+            },
+            "description": "Filter users by name."
+          }     
+        ],
+        "responses": {
+          "200": {
+            "description": "Users retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Access token is missing or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/authenticate": {
+      "post": {
+        "tags": ["Session Management"],
+        "summary": "Create a new session",
+        "description": "Endpoint to authenticate an existing user.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "The user's email address.",
+                    "example": "johndoe@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "The user's password.",
+                    "example": "johnpassword1233"
+                  }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Session created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "description": "JWT token for authentication."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Incorrect email/password combination.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{id}": {
+      "delete": {
+        "tags": ["User Management"],
+        "summary": "Delete a user by ID",
+        "description": "Endpoint to delete a user by their unique identifier.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The user's unique identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            },
+            "example": "6685b168024f7387b3163c51"
+          }
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "User deleted successfully."
+          },
+          "401": {
+            "description": "Unauthorized - Access token is missing or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - User with the provided ID does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["User Management"],
+        "summary": "Get user by ID",
+        "description": "Endpoint to retrieve a user by their unique identifier.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The user's unique identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            },
+            "example": "6685b168024f7387b3163c51"
+          }
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Access token is missing or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - User with the provided ID does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["User Management"],
+        "summary": "Update user by ID",
+        "description": "Endpoint to update a user by their unique identifier.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The user's unique identifier.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            },
+            "example": "6685b168024f7387b3163c51"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDto"
+              },
+              "examples": {
+                "updateUserExample": {
+                  "summary": "Example of updating a user",
+                  "value": {
+                    "name": "Jane Doe",
+                    "cpf": "789.456.123-40",
+                    "birth": "20/07/1995",
+                    "email": "janedoe@example.com",
+                    "old_password": "johnpassword1233",
+                    "password": "newPassword123",
+                    "password_confirmation": "newPassword123",
+                    "cep": "01001000",
+                    "qualified": "yes"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid user data or already existing email/cpf, missing old password, or password confirmation does not match.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Access token is missing or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - User with the provided ID does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
