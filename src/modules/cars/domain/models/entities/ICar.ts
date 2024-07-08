@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { IAccessorie } from './IAccessory';
+import { IAccessory } from './IAccessory';
 
 export interface ICar {
   _id: ObjectId;
@@ -7,6 +7,6 @@ export interface ICar {
   color: string;
   year: number;
   value_per_day: number;
-  accessories: IAccessorie[];
+  accessories: IAccessory[];
   number_of_passengers: number;
 }

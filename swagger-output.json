@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "FlexiLease Autos User Management API",
-    "description": "API endpoints for user registration, authentication, and management in FlexiLease Autos project.",
+    "title": "FlexiLease Autos API",
+    "description": "API endpoints for user, reserves and cars registration, user authentication, and management.",
     "version": "1.0.0"
   },
   "servers": [
@@ -58,58 +58,76 @@
             "example": "yes"
           }
         },
-        "required": ["name", "email", "cpf", "password", "birth"]
+        "required": [
+          "name",
+          "email",
+          "cpf",
+          "password",
+          "birth"
+        ]
       },
       "UserResponseDto": {
         "type": "object",
         "properties": {
           "_id": {
             "type": "string",
-            "description": "The user's unique identifier (converted from ObjectId)"
+            "description": "The user's unique identifier (converted from ObjectId)",
+            "example": "668bf18f9415ec038ce85aac"
           },
           "name": {
             "type": "string",
-            "description": "The user's full name"
+            "description": "The user's full name",
+            "example": "John Doe"
           },
           "cpf": {
             "type": "string",
-            "description": "The user's CPF number"
+            "description": "The user's CPF number",
+            "example": "123.456.789-40"
           },
           "birth": {
             "type": "string",
-            "description": "The user's date of birth in ISO 8601 format (e.g., YYYY-MM-DD)"
+            "description": "The user's date of birth in ISO 8601 format (e.g., YYYY-MM-DD)",
+            "example": "01/01/1990"
           },
           "email": {
             "type": "string",
-            "description": "The user's email address"
+            "description": "The user's email address",
+            "example": "johndoe@example.com"
           },
           "cep": {
             "type": "string",
-            "description": "The user's CEP (postal code) in Brazil"
+            "description": "The user's CEP (postal code) in Brazil",
+            "example": 1001000
           },
           "qualified": {
             "type": "string",
-            "description": "The user's qualification status (enum value from Qualified)"
+            "description": "The user's qualification status (enum value from Qualified)",
+            "example": "yes"
           },
           "patio": {
             "type": "string",
-            "description": "The user's patio information (optional)"
+            "description": "The user's patio information (optional)",
+            "example": "Praça da Sé"
           },
           "complement": {
             "type": "string",
-            "description": "The user's address complement (optional)"
+            "description": "The user's address complement (optional)",
+            "example": "lado ímpar"
           },
           "neighborhood": {
             "type": "string",
-            "description": "The user's neighborhood"
+            "description": "The user's neighborhood",
+            "example": "Sé"
           },
           "locality": {
             "type": "string",
-            "description": "The user's city/town"
+            "description": "The user's city/town",
+            "example": "São Paulo"
           },
           "uf": {
             "type": "string",
-            "description": "The user's state abbreviation in Brazil"
+            "description": "The user's state abbreviation in Brazil",
+            "example": "SP"
           }
         }
       },
@@ -213,14 +231,447 @@
             "example": "yes"
           }
         },
-        "required": ["name", "email", "cpf", "birth", "old_password", "password", "password_confirmation"]
+        "required": [
+          "name",
+          "email",
+          "cpf",
+          "birth",
+          "old_password",
+          "password",
+          "password_confirmation"
+        ]
+      },
+      "listUserDto": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserResponseDto"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "total of users",
+            "example": 1
+          },
+          "limit": {
+            "type": "integer",
+            "description": "quantity of users that will be returned",
+            "example": 10
+          },
+          "offset": {
+            "type": "integer",
+            "description": "pages skipped",
+            "example": 0
+          },
+          "offsets": {
+            "type": "integer",
+            "description": "limit / offset",
+            "example": 1
+          }
+        }
+      },
+      "Car": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "668bf54976905943cfe689da"
+          },
+          "model": {
+            "type": "string",
+            "example": "Corolla"
+          },
+          "color": {
+            "type": "string",
+            "example": "blue"
+          },
+          "year": {
+            "type": "integer",
+            "example": 2023
+          },
+          "value_per_day": {
+            "type": "number",
+            "example": 100
+          },
+          "accessories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Accessory"
+            }
+          },
+          "number_of_passagers": {
+            "type": "integer",
+            "example": 4
+          }
+        }
+      },
+      "Accessory": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "668bf54976905943cfe689d7"
+          },
+          "description": {
+            "type": "string",
+            "example": "4x4"
+          }
+        }
+      },
+      "CreateCarDto": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "The car's model.",
+            "example": "Corolla"
+          },
+          "color": {
+            "type": "string",
+            "description": "The car's color.",
+            "example": "Blue"
+          },
+          "year": {
+            "type": "integer",
+            "description": "The car's manufacturing year.",
+            "example": 2023
+          },
+          "value_per_day": {
+            "type": "number",
+            "description": "The rental value per day for the car.",
+            "example": 150
+          },
+          "accessories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccessoryDto"
+            },
+            "description": "List of accessories for the car.",
+            "example": [
+              {
+                "description": "sunroof"
+              },
+              {
+                "description": "4x4"
+              },
+              {
+                "description": "JBL"
+              }
+            ]
+          },
+          "number_of_passengers": {
+            "type": "integer",
+            "description": "The number of passengers the car can accommodate.",
+            "example": 5
+          }
+        },
+        "required": [
+          "model",
+          "color",
+          "year",
+          "value_per_day",
+          "accessories",
+          "number_of_passengers"
+        ]
+      },
+      "CarResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "The car's unique identifier.",
+            "example": "668bf54976905943cfe689da"
+          },
+          "model": {
+            "type": "string",
+            "description": "The car's model.",
+            "example": "Corolla"
+          },
+          "color": {
+            "type": "string",
+            "description": "The car's color.",
+            "example": "blue"
+          },
+          "year": {
+            "type": "integer",
+            "description": "The car's manufacturing year.",
+            "example": 2023
+          },
+          "value_per_day": {
+            "type": "number",
+            "description": "The rental value per day for the car.",
+            "example": 150
+          },
+          "accessories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccessoryDto"
+            },
+            "description": "List of accessories for the car."
+          },
+          "number_of_passengers": {
+            "type": "integer",
+            "description": "The number of passengers the car can accommodate.",
+            "example": 5
+          }
+        }
+      },
+      "listCarDto": {
+        "type": "object",
+        "properties": {
+          "cars": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CarResponseDto"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "total of users",
+            "example": 1
+          },
+          "limit": {
+            "type": "integer",
+            "description": "quantity of users that will be returned",
+            "example": 10
+          },
+          "offset": {
+            "type": "integer",
+            "description": "pages skipped",
+            "example": 0
+          },
+          "offsets": {
+            "type": "integer",
+            "description": "limit / offset",
+            "example": 1
+          }
+        }
+      },
+      "AccessoryDto": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "The accessory description.",
+            "example": "sunroof"
+          }
+        },
+        "required": [
+          "description"
+        ]
+      },
+      "AccessoryResponseDto": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "The accessory description.",
+            "example": "sunroof"
+          },
+          "_id": {
+            "type": "integer",
+            "description": "id of the accessory",
+            "example": "668bf54976905943cfe689d7"
+          }
+        },
+        "required": [
+          "description"
+        ]
+      },
+      "InvalidAccessoryError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "status": {
+            "type": "string",
+            "example": "Bad Request"
+          },
+          "message": {
+            "type": "string",
+            "example": "INVALID_ACCESSORY"
+          }
+        }
+      },
+      "InsufficientAccessoryError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 400
+          },
+          "status": {
+            "type": "string",
+            "example": "Bad Request"
+          },
+          "message": {
+            "type": "string",
+            "example": "INSUFFICIENT_ACCESSORY"
+          }
+        }
+      },
+      "CarNotFoundError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 404
+          },
+          "status": {
+            "type": "string",
+            "example": "Not Found"
+          },
+          "message": {
+            "type": "string",
+            "example": "CAR_NOT_FOUND"
+          }
+        }
+      },
+      "CreateReserveDto": {
+        "type": "object",
+        "properties": {
+          "id_user": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "example": "668bf18f9415ec038ce85aac"
+          },
+          "id_car": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "example": "668bf55276905943cfe689de"
+          },
+          "start_date": {
+            "type": "string",
+            "pattern": "^(0[1-9]|[12][0-9]|3[01])\\/(0[1-9]|1[0-2])\\/\\d{4}$",
+            "example": "01/12/2024"
+          },
+          "end_date": {
+            "type": "string",
+            "pattern": "^(0[1-9]|[12][0-9]|3[01])\\/(0[1-9]|1[0-2])\\/\\d{4}$",
+            "example": "05/12/2024"
+          }
+        },
+        "required": [
+          "id_user",
+          "id_car",
+          "start_date",
+          "end_date"
+        ]
+      },
+      "UpdateReserveDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{24}$"
+          },
+          "id_user": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{24}$"
+          },
+          "id_car": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{24}$"
+          },
+          "start_date": {
+            "type": "string",
+            "pattern": "^(0[1-9]|[12][0-9]|3[01])\\/(0[1-9]|1[0-2])\\/\\d{4}$"
+          },
+          "end_date": {
+            "type": "string",
+            "pattern": "^(0[1-9]|[12][0-9]|3[01])\\/(0[1-9]|1[0-2])\\/\\d{4}$"
+          }
+        },
+        "required": [
+          "id",
+          "id_user",
+          "id_car",
+          "start_date",
+          "end_date"
+        ]
+      },
+      "listReserveDto": {
+        "type": "object",
+        "properties": {
+          "reserves": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReserveResponseDto"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "total of reserves",
+            "example": 1
+          },
+          "limit": {
+            "type": "integer",
+            "description": "quantity of reserves that will be returned",
+            "example": 10
+          },
+          "offset": {
+            "type": "integer",
+            "description": "pages skipped",
+            "example": 0
+          },
+          "offsets": {
+            "type": "integer",
+            "description": "limit / offset",
+            "example": 1
+          }
+        }
+      },
+      "ReserveResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "668c1ba7aed398e01966eb17"
+          },
+          "id_user": {
+            "type": "string",
+            "format": "uuid",
+            "example": "668bf18f9415ec038ce85aac"
+          },
+          "id_car": {
+            "type": "string",
+            "format": "uuid",
+            "example": "668bf55276905943cfe689de"
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date",
+            "example": "01/12/2024"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date",
+            "example": "05/12/2024"
+          },
+          "final_value": {
+            "type": "number",
+            "example": 600
+          }
+        }
       }
     }
   },
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
   "paths": {
     "/user": {
       "post": {
-        "tags": ["User Management"],
+        "tags": [
+          "User"
+        ],
         "summary": "Create a new user",
         "description": "Endpoint to register a new user.",
         "requestBody": {
@@ -257,7 +708,9 @@
         }
       },
       "get": {
-        "tags": ["User Management"],
+        "tags": [
+          "User"
+        ],
         "summary": "List all users",
         "description": "Endpoint to retrieve all users.",
         "security": [
@@ -296,24 +749,73 @@
               "example": "John Doe"
             },
             "description": "Filter users by name."
-          }     
+          },
+          {
+            "name": "cpf",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "123.456.789-40"
+            },
+            "description": "Filter users by CPF."
+          },
+          {
+            "name": "birth",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "01/01/1990"
+            },
+            "description": "Filter users by date of birth."
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "johndoe@example.com"
+            },
+            "description": "Filter users by email."
+          },
+          {
+            "name": "cep",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "01001000"
+            },
+            "description": "Filter users by CEP."
+          },
+          {
+            "name": "qualified",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "example": "yes"
+            },
+            "description": "Filter users by qualification status."
+          }
         ],
         "responses": {
           "200": {
-            "description": "Users retrieved successfully.",
+            "description": "List of users retrieved successfully.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/UserResponseDto"
+                    "$ref": "#/components/schemas/listUserDto"
                   }
                 }
               }
             }
           },
           "401": {
-            "description": "Unauthorized - Access token is missing or invalid.",
+            "description": "Unauthorized - JWT Token is missing or invalid.",
             "content": {
               "application/json": {
                 "schema": {
@@ -325,11 +827,118 @@
         }
       }
     },
+    "/user/{id}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Retrieve a user by ID",
+        "description": "Endpoint to get user details by ID.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User details retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - JWT Token is missing or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Delete a user",
+        "description": "Endpoint to delete a user by ID.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "User deleted successfully."
+          },
+          "401": {
+            "description": "Unauthorized - JWT Token is missing or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/authenticate": {
       "post": {
-        "tags": ["Session Management"],
-        "summary": "Create a new session",
-        "description": "Endpoint to authenticate an existing user.",
+        "tags": [
+          "User"
+        ],
+        "summary": "User login",
+        "description": "Endpoint to authenticate a user and generate a JWT token.",
         "requestBody": {
           "required": true,
           "content": {
@@ -344,18 +953,21 @@
                   },
                   "password": {
                     "type": "string",
-                    "description": "The user's password.",
+                    "description": "The user's password in plain text.",
                     "example": "johnpassword1233"
                   }
                 },
-                "required": ["email", "password"]
+                "required": [
+                  "email",
+                  "password"
+                ]
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Session created successfully.",
+            "description": "User authenticated successfully.",
             "content": {
               "application/json": {
                 "schema": {
@@ -363,7 +975,7 @@
                   "properties": {
                     "token": {
                       "type": "string",
-                      "description": "JWT token for authentication."
+                      "description": "JWT token for authenticated user."
                     }
                   }
                 }
@@ -371,7 +983,7 @@
             }
           },
           "400": {
-            "description": "Bad Request - Incorrect email/password combination.",
+            "description": "Bad Request - Invalid credentials.",
             "content": {
               "application/json": {
                 "schema": {
@@ -379,39 +991,9 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/user/{id}": {
-      "delete": {
-        "tags": ["User Management"],
-        "summary": "Delete a user by ID",
-        "description": "Endpoint to delete a user by their unique identifier.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "The user's unique identifier.",
-            "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
-            },
-            "example": "6685b168024f7387b3163c51"
-          }
-        ],
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "User deleted successfully."
           },
           "401": {
-            "description": "Unauthorized - Access token is missing or invalid.",
+            "description": "Unauthorized - Invalid email or password.",
             "content": {
               "application/json": {
                 "schema": {
@@ -419,9 +1001,541 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/car": {
+      "post": {
+        "tags": [
+          "Car"
+        ],
+        "summary": "Create a new car",
+        "description": "Create a new car in the system.",
+        "operationId": "createCar",
+        "requestBody": {
+          "description": "Car creation details",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCarDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Car successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/InvalidAccessoryError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/InsufficientAccessoryError"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Car"
+        ],
+        "summary": "List cars with optional pagination and filters",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of cars to return",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "description": "Number of cars to skip",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "model",
+            "in": "query",
+            "required": false,
+            "description": "Car model to filter by",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "color",
+            "in": "query",
+            "required": false,
+            "description": "Car color to filter by",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "required": false,
+            "description": "Car year to filter by",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "value_per_day",
+            "in": "query",
+            "required": false,
+            "description": "Car value per day to filter by",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "accessories",
+            "in": "query",
+            "required": false,
+            "description": "Car accessories to filter by",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "number_of_passagers",
+            "in": "query",
+            "required": false,
+            "description": "Number of passengers to filter by",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A paginated list of cars",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "cars": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/listCarDto"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "Bad Request"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "One or more fields are invalid."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/car/{id}": {
+      "get": {
+        "tags": [
+          "Car"
+        ],
+        "summary": "Get car by id",
+        "description": "Get details of a car by ID.",
+        "operationId": "getCar",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the car to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Car details retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarResponseDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found - User with the provided ID does not exist.",
+            "description": "Car not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarNotFoundError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Car"
+        ],
+        "summary": "Delete a car by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the car to delete",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Car not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "Not Found"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Car not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Car"
+        ],
+        "summary": "Update a car by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the car to update",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "model": {
+                    "type": "string",
+                    "example": "frontier"
+                  },
+                  "color": {
+                    "type": "string",
+                    "example": "white"
+                  },
+                  "year": {
+                    "type": "integer",
+                    "example": 2009
+                  },
+                  "value_per_day": {
+                    "type": "number",
+                    "example": 150
+                  },
+                  "accessories": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Accessory"
+                    }
+                  },
+                  "number_of_passengers": {
+                    "type": "integer",
+                    "example": 6
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Car updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Car"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "bad request"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "One or more fields are invalid."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Car not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "Not found"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Car not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/car/{car_id}/accessories/{id}": {
+      "patch": {
+        "tags": [
+          "Car"
+        ],
+        "summary": "Update an accessory of a car",
+        "parameters": [
+          {
+            "name": "car_id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the car",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the accessory to update",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "description": "description of the accessory",
+                    "example": "Premium leather seats"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Accessory updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessoryResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Bad request status code",
+                      "example": 400
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "Http status response",
+                      "example": "Bad request"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "One or more fields are invalid."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Car or accessory not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reserve": {
+      "post": {
+        "tags": [
+          "Reserves"
+        ],
+        "summary": "Create a new reservation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReserveDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReserveResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Bad request status code",
+                      "example": 400
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "Http status response",
+                      "example": "Bad request"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The user dont be qualified. Please try again when have driver license"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Car or User not found.",
             "content": {
               "application/json": {
                 "schema": {
@@ -433,54 +1547,181 @@
         }
       },
       "get": {
-        "tags": ["User Management"],
-        "summary": "Get user by ID",
-        "description": "Endpoint to retrieve a user by their unique identifier.",
+        "tags": [
+          "Reserves"
+        ],
+        "summary": "List reservations with optional pagination",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "The user's unique identifier.",
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Number of items to return per page"
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of items to skip (pagination offset)"
+          },
+          {
+            "in": "query",
+            "name": "id_user",
             "schema": {
               "type": "string",
               "pattern": "^[0-9a-fA-F]{24}$"
             },
-            "example": "6685b168024f7387b3163c51"
-          }
-        ],
-        "security": [
+            "description": "ID of the user associated with the reservation"
+          },
           {
-            "BearerAuth": []
+            "in": "query",
+            "name": "start_date",
+            "schema": {
+              "type": "string",
+              "pattern": "^(0[1-9]|[12][0-9]|3[01])\\/(0[1-9]|1[0-2])\\/\\d{4}$"
+            },
+            "description": "Start date of the reservation (dd/MM/yyyy)"
+          },
+          {
+            "in": "query",
+            "name": "end_date",
+            "schema": {
+              "type": "string",
+              "pattern": "^(0[1-9]|[12][0-9]|3[01])\\/(0[1-9]|1[0-2])\\/\\d{4}$"
+            },
+            "description": "End date of the reservation (dd/MM/yyyy)"
+          },
+          {
+            "in": "query",
+            "name": "id_car",
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            },
+            "description": "ID of the car associated with the reservation"
           }
         ],
         "responses": {
           "200": {
-            "description": "User retrieved successfully.",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserResponseDto"
+                  "$ref": "#/components/schemas/listReserveDto"
                 }
               }
             }
           },
-          "401": {
-            "description": "Unauthorized - Access token is missing or invalid.",
+          "400": {
+            "description": "Bad Request",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UnauthorizedError"
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Bad request status code",
+                      "example": 400
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "Http status response",
+                      "example": "Bad request"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The user dont be qualified. Please try again when have driver license"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reserve/{id}": {
+      "get": {
+        "tags": [
+          "Reserves"
+        ],
+        "summary": "Get details of a specific reservation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            },
+            "description": "ID of the reservation"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReserveResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Bad request status code",
+                      "example": 400
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "Http status response",
+                      "example": "Bad request"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The id of user is in an invalid format. Please insert a valid ObjectId and try again."
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Not Found - User with the provided ID does not exist.",
+            "description": "Reserve not found",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NotFoundError"
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "Not found"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Reserve not found"
+                    }
+                  }
                 }
               }
             }
@@ -488,20 +1729,20 @@
         }
       },
       "put": {
-        "tags": ["User Management"],
-        "summary": "Update user by ID",
-        "description": "Endpoint to update a user by their unique identifier.",
+        "tags": [
+          "Reserves"
+        ],
+        "summary": "Update details of a specific reservation",
         "parameters": [
           {
-            "name": "id",
             "in": "path",
+            "name": "id",
             "required": true,
-            "description": "The user's unique identifier.",
             "schema": {
               "type": "string",
               "pattern": "^[0-9a-fA-F]{24}$"
             },
-            "example": "6685b168024f7387b3163c51"
+            "description": "ID of the reservation"
           }
         ],
         "requestBody": {
@@ -509,69 +1750,141 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateUserDto"
-              },
-              "examples": {
-                "updateUserExample": {
-                  "summary": "Example of updating a user",
-                  "value": {
-                    "name": "Jane Doe",
-                    "cpf": "789.456.123-40",
-                    "birth": "20/07/1995",
-                    "email": "janedoe@example.com",
-                    "old_password": "johnpassword1233",
-                    "password": "newPassword123",
-                    "password_confirmation": "newPassword123",
-                    "cep": "01001000",
-                    "qualified": "yes"
-                  }
-                }
+                "$ref": "#/components/schemas/UpdateReserveDto"
               }
             }
           }
         },
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
         "responses": {
           "200": {
-            "description": "User updated successfully.",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserResponseDto"
+                  "$ref": "#/components/schemas/ReserveResponseDto"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad Request - Invalid user data or already existing email/cpf, missing old password, or password confirmation does not match.",
+            "description": "Bad Request",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BadRequestError"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized - Access token is missing or invalid.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UnauthorizedError"
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Bad request status code",
+                      "example": 400
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "Http status response",
+                      "example": "Bad request"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The id of user is in an invalid format. Please insert a valid ObjectId and try again."
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Not Found - User with the provided ID does not exist.",
+            "description": "Reserve not found",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NotFoundError"
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "Not found"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Reserve not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Reserves"
+        ],
+        "summary": "Delete a specific reservation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            },
+            "description": "ID of the reservation"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "Bad request status code",
+                      "example": 400
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "Http status response",
+                      "example": "Bad request"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The id of user is in an invalid format. Please insert a valid ObjectId and try again."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Reserve not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "Not found"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Reserve not found"
+                    }
+                  }
                 }
               }
             }

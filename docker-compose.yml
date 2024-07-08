@@ -8,5 +8,5 @@ services:
     container_name: mongo-A
     ports:
       - 27017:27017
-    # volumes:
-    #   - .docker/mongo/:/data/db
+    volumes:
+      - .docker/mongo/:/data/db

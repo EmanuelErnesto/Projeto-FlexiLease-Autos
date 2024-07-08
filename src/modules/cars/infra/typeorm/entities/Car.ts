@@ -1,4 +1,4 @@
-import { IAccessorie } from '@modules/cars/domain/models/entities/IAccessorie';
+import { IAccessory } from '@modules/cars/domain/models/entities/IAccessory';
 import { ICar } from '@modules/cars/domain/models/entities/ICar';
 import { ObjectId } from 'mongodb';
 import { Column, Entity, ObjectIdColumn } from 'typeorm';
@@ -21,7 +21,7 @@ export class Car implements ICar {
   value_per_day: number;
 
   @Column({ type: 'array', nullable: false })
-  accessories: IAccessorie[];
+  accessories: IAccessory[];
 
   @Column({ type: 'integer', nullable: false })
   number_of_passengers: number;

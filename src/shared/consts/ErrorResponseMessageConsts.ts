@@ -16,3 +16,14 @@ export const INVALID_ACCESSORY =
   'You inserted duplicated accessory. Please modify and try again.';
 export const CAR_NOT_FOUND = 'Car not found';
 export const INSUFFICIENT_ACCESSORY = 'The minimum of accessories is 1';
+export const USER_DONT_QUALIFIED =
+  'The user dont be qualified. Please try again when have driver license';
+export const USER_ALREADY_HAVE_RESERVE =
+  'The user already reserved car in this given days.';
+export const CAR_ALREADY_RESERVED =
+  'The car already have reserved in the given days';
+export const INVALID_START_OR_END_DATE =
+  'Invalid start or end_date. The start date dont be after than after date. Both dates cant be in past';
+export const RESERVE_NOT_FOUND = 'Reserve not found';
+export const SAME_USER_CAR_ID =
+  'The id of user and car that you give are the same that already exists';
