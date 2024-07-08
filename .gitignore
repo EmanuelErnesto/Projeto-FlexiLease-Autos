@@ -138,3 +138,9 @@ dist
 
 # stryker temp files
 .stryker-tmp
+
+# Swagger backup archive
+swagger.txt
+
+#docker local data
+.docker

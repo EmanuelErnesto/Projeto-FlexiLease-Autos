@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/v1', routes);
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
+app.use('/api/v1/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
 app.use(ErrorHandler);
 app.use(RouteNotFound);
