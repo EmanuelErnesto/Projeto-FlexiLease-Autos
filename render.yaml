@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: projeto-flexilease-autos
+    env: node
+    plan: free
+    buildCommand: |
+      npm install
+      docker build -t projeto-flexilease-autos .
+    startCommand: |
+      docker run -d --name mongo-A -p 27017:27017 mongo
+      docker run -d --name projeto-flexilease-autos -p 3000:3000 --link mongo-A:mongo projeto-flexilease-autos
