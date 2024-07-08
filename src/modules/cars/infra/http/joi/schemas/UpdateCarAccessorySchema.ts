@@ -15,5 +15,5 @@ export const UpdateCarAccessorySchema = Joi.object({
         'The id is in an invalid format. Please insert a valid ObjectId and try again.',
     })
     .required(),
-  description: Joi.string().required().min(10).max(100),
+  description: Joi.string().required().min(3).max(100),
 });

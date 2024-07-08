@@ -18,7 +18,7 @@ export const UpdateCarSchema = Joi.object({
   accessories: Joi.array()
     .items(
       Joi.object({
-        description: Joi.string().required().min(10).max(100),
+        description: Joi.string().required().min(3).max(100),
         _id: Joi.string()
           .pattern(/^[0-9a-fA-F]{24}$/, 'Object id')
           .messages({

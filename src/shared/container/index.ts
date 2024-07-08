@@ -6,6 +6,8 @@ import { IHashProvider } from '@modules/users/providers/hashProvider/models/IHas
 import BcryptHashProvider from '@modules/users/providers/hashProvider/implementations/BcryptHashProvider';
 import { ICarsRepository } from '@modules/cars/domain/models/repositories/CarsRepository.interface';
 import CarsRepository from '@modules/cars/infra/typeorm/repositories/implementation/CarsRepository';
+import { IReservesRepository } from '@modules/reserves/domain/models/repositories/ReservesRepository.interface';
+import ReservesRepository from '@modules/reserves/infra/typeorm/repositories/implementation/ReservesRepository';
 
 container.registerSingleton<IUsersRepository>(
   'UsersRepository',
@@ -15,3 +17,8 @@ container.registerSingleton<IUsersRepository>(
 container.registerSingleton<IHashProvider>('HashProvider', BcryptHashProvider);
 
 container.registerSingleton<ICarsRepository>('CarsRepository', CarsRepository);
+
+container.registerSingleton<IReservesRepository>(
+  'ReservesRepository',
+  ReservesRepository,
+);
