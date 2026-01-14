@@ -35,7 +35,7 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "tsyringe": "^4.8.0",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.26"
   },
   "devDependencies": {
     "@stryker-mutator/vitest-runner": "^8.2.6",
